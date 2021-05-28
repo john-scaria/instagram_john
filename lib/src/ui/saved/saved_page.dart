@@ -12,6 +12,9 @@ class SavedPage extends StatelessWidget {
             itemCount: state.newsList.length,
             itemBuilder: (context, index) {
               return ListTile(
+                leading: Image(
+                  image: NetworkImage('${state.newsList[index].photoUrl}'),
+                ),
                 title: Text(state.newsList[index].title),
                 subtitle: Text(state.newsList[index].channelName),
               );

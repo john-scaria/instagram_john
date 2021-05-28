@@ -9,3 +9,8 @@ class SaveItemEvent extends SaveEvent {
   final NewsModel newsModel;
   SaveItemEvent({@required this.newsModel});
 }
+
+class UnSaveItemEvent extends SaveEvent {
+  final NewsModel newsModel;
+  UnSaveItemEvent({@required this.newsModel});
+}

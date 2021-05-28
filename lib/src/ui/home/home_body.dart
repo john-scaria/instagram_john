@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:instagram_john/src/bloc/news_bloc/news_bloc.dart';
 import 'package:instagram_john/src/bloc/save_bloc/save_bloc.dart';
+import 'package:instagram_john/src/bloc/comment_bloc/comment_bloc.dart';
 import 'package:instagram_john/src/models/news_model.dart';
 import 'package:readmore/readmore.dart';
 
@@ -45,7 +46,7 @@ class NewsItem extends StatelessWidget {
         Row(
           children: [
             CircleAvatar(
-              radius: 20.0,
+              radius: 15.0,
               child: Icon(Icons.person),
             ),
             SizedBox(
@@ -86,11 +87,31 @@ class NewsItem extends StatelessWidget {
               width: 10.0,
             ),
             Spacer(),
-            IconButton(
-              icon: Icon(Icons.bookmark_outline),
-              onPressed: () {
-                BlocProvider.of<SaveBloc>(context)
-                    .add(SaveItemEvent(newsModel: newsItem));
+            BlocBuilder<SaveBloc, SaveState>(
+              builder: (context, state) {
+                if (state is SaveLoad) {
+                  for (var k in state.newsList) {
+                    if (k.id == newsItem.id) {
+                      return IconButton(
+                        icon: Icon(Icons.bookmark),
+                        onPressed: () {
+                          BlocProvider.of<SaveBloc>(context)
+                              .add(UnSaveItemEvent(newsModel: newsItem));
+                        },
+                      );
+                    }
+                  }
+                  return IconButton(
+                    icon: Icon(Icons.bookmark_outline),
+                    onPressed: () {
+                      BlocProvider.of<SaveBloc>(context)
+                          .add(SaveItemEvent(newsModel: newsItem));
+                    },
+                  );
+                }
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
               },
             ),
           ],
@@ -116,7 +137,47 @@ class NewsItem extends StatelessWidget {
         SizedBox(
           height: 10.0,
         ),
-        Text('View Comments'),
+        BlocBuilder<CommentBloc, CommentState>(
+          builder: (context, state) {
+            if (state is CommentInitial) {
+              return InkWell(
+                onTap: () {
+                  BlocProvider.of<CommentBloc>(context)
+                      .add(DisplayCommentEvent());
+                },
+                child: Text('View Comments'),
+              );
+            }
+            if (state is CommentLoaded) {
+              return Container(
+                height: 50.0,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: state.commentList.length,
+                  itemBuilder: (context, index) {
+                    return Text(
+                        '${state.commentList[index].userName} : ${state.commentList[index].comment}');
+                  },
+                ),
+              );
+            }
+            if (state is CommentError) {
+              return InkWell(
+                onTap: () {
+                  BlocProvider.of<CommentBloc>(context)
+                      .add(DisplayCommentEvent());
+                },
+                child: Text('Retry Loading Comments'),
+              );
+            }
+            return Container(
+              height: 20,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          },
+        ),
       ],
     );
   }

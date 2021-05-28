@@ -10,7 +10,10 @@ class MainPage extends StatelessWidget {
         leading: Icon(Icons.camera_alt_outlined),
         title: Text('Instagram'),
         actions: [
-          Icon(Icons.messenger_outline_sharp),
+          IconButton(
+            icon: Icon(Icons.messenger_outline_sharp),
+            onPressed: () {},
+          ),
         ],
       ),
       body: BlocBuilder<NavigationBloc, NavigationState>(
@@ -26,27 +29,48 @@ class MainPage extends StatelessWidget {
           );
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: (index) {
-          BlocProvider.of<NavigationBloc>(context)
-              .add(ItemClickedEvent(index: index));
+      bottomNavigationBar: BlocBuilder<NavigationBloc, NavigationState>(
+        builder: (context, state) {
+          if (state is NavigationInitial) {
+            return BottomNavigationBar(
+              onTap: (index) {
+                BlocProvider.of<NavigationBloc>(context)
+                    .add(ItemClickedEvent(index: index));
+              },
+              currentIndex: state.selectedIndex,
+              items: _bnbList,
+            );
+          }
+          if (state is ItemSelectedState) {
+            return BottomNavigationBar(
+              onTap: (index) {
+                BlocProvider.of<NavigationBloc>(context)
+                    .add(ItemClickedEvent(index: index));
+              },
+              currentIndex: state.selectedIndex,
+              items: _bnbList,
+            );
+          }
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         },
-        currentIndex: 0,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark),
-            label: 'Bookmark',
-          ),
-        ],
       ),
     );
   }
 }
+
+final List<BottomNavigationBarItem> _bnbList = [
+  BottomNavigationBarItem(
+    icon: Icon(Icons.home),
+    label: 'Home',
+  ),
+  BottomNavigationBarItem(
+    icon: Icon(Icons.search),
+    label: 'Search',
+  ),
+  BottomNavigationBarItem(
+    icon: Icon(Icons.bookmark),
+    label: 'Bookmark',
+  ),
+];

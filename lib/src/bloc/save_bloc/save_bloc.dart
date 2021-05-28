@@ -27,5 +27,11 @@ class SaveBloc extends Bloc<SaveEvent, SaveState> {
       final List<NewsModel> _newsList = dbRepository.getCache();
       yield SaveLoad(newsList: _newsList);
     }
+    if (event is UnSaveItemEvent) {
+      yield SaveLoading();
+      dbRepository.removeCache(event.newsModel);
+      final List<NewsModel> _newsList = dbRepository.getCache();
+      yield SaveLoad(newsList: _newsList);
+    }
   }
 }

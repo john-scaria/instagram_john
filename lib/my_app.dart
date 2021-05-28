@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:instagram_john/src/bloc/comment_bloc/comment_bloc.dart';
 import 'package:instagram_john/src/bloc/navigation_bloc/navigation_bloc.dart';
 import 'package:instagram_john/src/bloc/news_bloc/news_bloc.dart';
 import 'package:instagram_john/src/bloc/save_bloc/save_bloc.dart';
 import 'package:instagram_john/src/models/news_model.dart';
+import 'package:instagram_john/src/repositories/comment_client.dart';
+import 'package:instagram_john/src/repositories/comment_repository.dart';
 import 'package:instagram_john/src/repositories/db_client.dart';
 import 'package:instagram_john/src/repositories/db_repository.dart';
 import 'package:instagram_john/src/repositories/network_client.dart';
@@ -48,6 +51,15 @@ class _MyAppState extends State<MyApp> {
               ),
             ),
           )..add(SaveInitEvent()),
+        ),
+        BlocProvider<CommentBloc>(
+          create: (context) => CommentBloc(
+            commentRepository: CommentRepository(
+              commentClient: CommentClient(
+                httpClient: http.Client(),
+              ),
+            ),
+          ),
         ),
       ],
       child: MyMaterial(),

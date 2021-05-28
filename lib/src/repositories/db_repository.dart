@@ -9,4 +9,6 @@ class DbRepository {
   bool addCache(NewsModel newsModel) => dbClient.insertCache(newsModel);
 
   List<NewsModel> getCache() => dbClient.readCache();
+
+  bool removeCache(NewsModel newsModel) => dbClient.deleteCache(newsModel);
 }

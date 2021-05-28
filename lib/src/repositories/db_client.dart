@@ -32,4 +32,13 @@ class DbClient {
       return [];
     }
   }
+
+  bool deleteCache(NewsModel newsModel) {
+    try {
+      sBox.delete(newsModel.id);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
 }
